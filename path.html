@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Raksha Bandhan — From Raushan ❤️</title>
+<meta name="description" content="Deluxe Raksha Bandhan card by Raushan — play music, burst confetti, send to sisters." />
+<style>
+  :root{
+    --bg1:#0b0410;
+    --bg2:#171018;
+    --glass: rgba(255,255,255,0.04);
+    --gold: #f5c242;
+    --muted: #d9cfc7;
+    --accent: #ff7a7a;
+    --card-w: 980px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',sans-serif;background:#000;color:#fff;-webkit-font-smoothing:antialiased}
+  body{display:flex;align-items:center;justify-content:center;padding:28px;overflow:hidden}
+
+/* Background + lights */
+  .bg {
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background: radial-gradient(600px 400px at 10% 15%, rgba(255,200,140,0.03), transparent 12%),
+                radial-gradient(500px 300px at 80% 35%, rgba(120,200,255,0.02), transparent 12%),
+                linear-gradient(120deg,var(--bg1), var(--bg2));
+    transition:background 0.6s;
+  }
+  .bokeh {
+    position: absolute;inset:0;mix-blend-mode:screen;opacity:0.9;background-size:200% 200%;animation:bokehMove 18s linear infinite;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.06), transparent 12%),
+      radial-gradient(circle at 80% 40%, rgba(255,255,255,0.06), transparent 12%),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.04), transparent 12%);
+  }
+  @keyframes bokehMove{0%{background-position:0 0}50%{background-position:100% 100%}100%{background-position:0 0}}
+
+/* Card */
+  .card {
+    width:min(var(--card-w),96%);max-width:1100px;border-radius:20px;padding:28px;position:relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 20px 70px rgba(0,0,0,0.7);z-index:2;backdrop-filter: blur(6px);
+    overflow:visible;
+  }
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+
+/* Rakhi */
+  .rakhi-wrap{display:flex;align-items:center;gap:16px}
+  .rakhi-svg{width:96px;height:96px;flex:0 0 96px;animation:spin 22s linear infinite}
+  @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Title - letter reveal */
+  .title {
+    font-size:48px;font-weight:900;line-height:1;color:transparent;
+    background:linear-gradient(90deg,var(--gold), #ffb85c 60%, #ffdca6);-webkit-background-clip:text;
+    position:relative;display:inline-block;white-space:nowrap;overflow:hidden;
+  }
+  .title .word { display:inline-block; transform:translateY(12px); opacity:0; animation:wordIn 900ms cubic-bezier(.2,.9,.2,1) forwards; }
+  .title .word:nth-child(1){animation-delay:120ms}
+  .title .word:nth-child(2){animation-delay:260ms}
+  .title .word:nth-child(3){animation-delay:400ms}
+  @keyframes wordIn{to{transform:translateY(0);opacity:1}}
+
+/* Subtitle */
+  .subtitle{color:var(--muted);margin-top:8px;font-size:15px}
+
+/* Controls */
+  .controls{display:flex;gap:10px;margin-top:16px;align-items:center}
+  .btn{
+    padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:var(--glass);color:#fff;font-weight:700;cursor:pointer;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.45);transition:transform .12s ease,background .12s
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:linear-gradient(180deg, rgba(245,194,66,0.12), rgba(245,194,66,0.06));border-color:rgba(245,194,66,0.35)}
+  .controls .range{appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,#fff4,#fff1);width:140px}
+
+/* Footer */
+  .from-line{margin-top:18px;text-align:center;font-weight:700;color:var(--gold);text-shadow:0 2px 12px rgba(245,194,66,0.12)}
+
+/* Small sparkles around rakhi */
+  .sparkles{position:absolute;left:22px;top:12px;pointer-events:none;z-index:3}
+
+/* Canvases */
+  canvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+
+/* Modal greeting */
+  .modal-back{position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.65));display:flex;align-items:center;justify-content:center;z-index:999;font-family:inherit}
+  .modal{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:14px;max-width:520px;width:94%;text-align:center;color:#fff;box-shadow:0 18px 60px rgba(0,0,0,0.7)}
+  .modal h2{margin:0;font-size:22px}
+  .modal p{color:var(--muted);margin-top:8px}
+  .modal .actions{display:flex;gap:10px;justify-content:center;margin-top:14px}
+
+/* Responsive */
+  @media (max-width:720px){
+    .title{font-size:28px}
+    .rakhi-svg{width:72px;height:72px;flex:0 0 72px}
+    .controls{flex-wrap:wrap}
+  }
+
+/* Focus outlines */
+  .btn:focus, .control:focus, button:focus {outline:3px solid rgba(255,255,255,0.06);outline-offset:3px;border-radius:10px}
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden>
+    <div class="bokeh" aria-hidden></div>
+  </div>
+
+  <div class="card" role="main" aria-label="Raksha Bandhan card">
+    <div class="row" style="align-items:flex-start">
+      <div style="position:relative">
+        <!-- Rakhi SVG with glow -->
+        <svg class="rakhi-svg" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <defs>
+            <radialGradient id="rg2" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#fff6e6"/><stop offset="100%" stop-color="#ffd9b2"/></radialGradient>
+            <filter id="glow2" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <circle cx="64" cy="64" r="36" fill="url(#rg2)" stroke="#b65a2a" stroke-width="6" filter="url(#glow2)"/>
+          <g transform="translate(64 64)">
+            <circle r="18" fill="#ffd9a6" stroke="#8b3a20" stroke-width="3"/>
+            <text x="0" y="6" text-anchor="middle" font-size="12" font-weight="800" fill="#7b2a18" font-family="Inter, sans-serif">रक्षा</text>
+          </g>
+        </svg>
+
+        <!-- small sparkles -->
+        <svg class="sparkles" width="120" height="120" viewBox="0 0 120 120" aria-hidden>
+          <g fill="#fff8" transform="translate(6,6)">
+            <circle cx="12" cy="12" r="1.6"/><circle cx="36" cy="22" r="1.2"/><circle cx="86" cy="18" r="1.6"/>
+            <circle cx="92" cy="52" r="1.2"/><circle cx="72" cy="84" r="1.2"/><circle cx="24" cy="70" r="1.2"/>
+          </g>
+        </svg>
+      </div>
+
+      <div style="flex:1;min-width:240px">
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:14px">
+            <h1 class="title" aria-live="polite">
+              <!-- split into words for stagger -->
+              <span class="word">Happy</span>&nbsp;<span class="word">Raksha</span>&nbsp;<span class="word">Bandhan</span>
+            </h1>
+          </div>
+          <p class="subtitle">Wishing you love, protection and endless smiles — celebrate this special bond.</p>
+
+          <div class="controls" role="group" aria-label="Controls">
+            <button id="playBtn" class="btn primary" aria-pressed="false">Play ▶</button>
+            <button id="pauseBtn" class="btn" aria-pressed="false">Pause ⏸</button>
+            <button id="muteBtn" class="btn" aria-pressed="false">Mute 🔈</button>
+
+            <input id="fileInput" type="file" accept="audio/*" style="display:none" />
+            <button id="uploadBtn" class="btn" title="Upload your MP3">Upload Music 🎵</button>
+
+            <input id="urlInput" placeholder="Paste MP3 URL" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;width:220px" />
+            <button id="setUrlBtn" class="btn">Set</button>
+
+            <label style="display:flex;align-items:center;gap:8px;margin-left:auto">
+              <input id="volRange" class="range" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume" />
+            </label>
+            <button id="burstBtn" class="btn">Burst Confetti ✨</button>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:10px;align-items:center;flex-wrap:wrap">
+            <button id="shareBtn" class="btn">Share</button>
+            <button id="downloadBtn" class="btn">Download Card PNG</button>
+            <div style="color:var(--muted);font-size:13px">Tip: Tap anywhere for a surprise burst.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="from-line">created by Raushan Mishra ❤️</div>
+  </div>
+
+  <!-- Canvas layers -->
+  <canvas id="petalsCanvas" aria-hidden></canvas>
+  <canvas id="confettiCanvas" aria-hidden></canvas>
+  <canvas id="snapshotCanvas" style="display:none"></canvas>
+
+  <!-- Modal greeting -->
+  <div id="modal" class="modal-back" role="dialog" aria-modal="true" style="display:flex">
+    <div class="modal" role="document">
+      <h2>From Raushan to all my loving sisters ❤️</h2>
+      <p>Happy Raksha Bandhan! Tap <strong>Play</strong> to add music and tap the screen to burst confetti ✨</p>
+      <div class="actions">
+        <button id="modalOk" class="btn primary">Open Card</button>
+        <button id="modalLater" class="btn">Maybe later</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ---------------------------
+   Modal behavior
+   --------------------------- */
+const modal = document.getElementById('modal');
+document.getElementById('modalOk').addEventListener('click', ()=> modal.style.display='none');
+document.getElementById('modalLater').addEventListener('click', ()=> modal.style.display='none');
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') modal.style.display='none' });
+
+/* ---------------------------
+   Canvas setup & resize
+   --------------------------- */
+const petalsCanvas = document.getElementById('petalsCanvas');
+const confettiCanvas = document.getElementById('confettiCanvas');
+const pctx = petalsCanvas.getContext('2d');
+const cctx = confettiCanvas.getContext('2d');
+
+function resize(){
+  [petalsCanvas, confettiCanvas].forEach(c=>{
+    const dpr = window.devicePixelRatio || 1;
+    c.width = innerWidth * dpr;
+    c.height = innerHeight * dpr;
+    c.style.width = innerWidth + 'px';
+    c.style.height = innerHeight + 'px';
+    const ctx = c.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  });
+}
+resize(); addEventListener('resize', resize);
+
+/* ---------------------------
+   Petals (multi-shape)
+   --------------------------- */
+const petalTypes = ['ellipse','heart','leaf'];
+const petalColors = ['rgba(255,182,193,0.95)','rgba(255,105,180,0.95)','rgba(255,165,0,0.95)','rgba(255,215,180,0.95)'];
+let petals = [];
+function makePetal(){
+  return {
+    x: Math.random()*innerWidth,
+    y: -20 - Math.random()*200,
+    size: 8 + Math.random()*18,
+    vx: (Math.random()-0.5)*0.8,
+    vy: 0.6 + Math.random()*1.6,
+    rot: Math.random()*Math.PI*2,
+    rotSpeed: (Math.random()-0.5)*0.06,
+    color: petalColors[Math.floor(Math.random()*petalColors.length)],
+    type: petalTypes[Math.floor(Math.random()*petalTypes.length)],
+  };
+}
+for(let i=0;i<30;i++) petals.push(makePetal());
+
+function drawHeart(ctx, size){
+  ctx.beginPath();
+  const s = size/2;
+  ctx.moveTo(0, s*0.6);
+  ctx.bezierCurveTo(s*0.7, -s*0.5, s*1.5, s*0.2, 0, s*1.2);
+  ctx.bezierCurveTo(-s*1.5, s*0.2, -s*0.7, -s*0.5, 0, s*0.6);
+  ctx.fill();
+}
+
+function drawPetals(){
+  pctx.clearRect(0,0,innerWidth,innerHeight);
+  petals.forEach((p,i)=>{
+    p.x += p.vx; p.y += p.vy; p.rot += p.rotSpeed;
+    if(p.y > innerHeight + 40) { petals[i] = makePetal(); petals[i].y = -60; }
+    pctx.save(); pctx.translate(p.x,p.y); pctx.rotate(p.rot);
+    pctx.fillStyle = p.color;
+    if(p.type==='ellipse'){
+      pctx.beginPath(); pctx.ellipse(0,0,p.size*0.6,p.size,0,0,Math.PI*2); pctx.fill();
+    } else if(p.type==='heart'){
+      drawHeart(pctx, p.size);
+    } else {
+      // leaf: rotated ellipse with little stroke
+      pctx.beginPath(); pctx.ellipse(0,0,p.size*0.4,p.size,0,0,Math.PI*2); pctx.fill();
+      pctx.strokeStyle = 'rgba(0,0,0,0.08)'; pctx.lineWidth=0.8; pctx.stroke();
+    }
+    pctx.restore();
+  });
+  requestAnimationFrame(drawPetals);
+}
+drawPetals();
+
+/* ---------------------------
+   Confetti with physics
+   --------------------------- */
+let pieces = [];
+function spawnConfetti(x,y,count=120,spread=10){
+  for(let i=0;i<count;i++){
+    const angle = (Math.random()-0.5)*Math.PI/spread;
+    const speed = 3 + Math.random()*6;
+    pieces.push({
+      x, y,
+      vx: Math.cos(angle)*speed + (Math.random()-0.5)*3,
+      vy: Math.sin(angle)*speed - (Math.random()*6+2),
+      size: 6+Math.random()*10,
+      rot: Math.random()*360,
+      rotSpeed: (Math.random()-0.5)*12,
+      color: `hsl(${Math.random()*360},85%,60%)`,
+      shape: Math.random() > 0.5 ? 'rect' : 'tri',
+      life: 120 + Math.floor(Math.random()*80)
+    });
+  }
+}
+
+function drawConfetti(){
+  cctx.clearRect(0,0,innerWidth,innerHeight);
+  for(let i=pieces.length-1;i>=0;i--){
+    const p = pieces[i];
+    p.vy += 0.22; p.vx *= 0.998; p.x += p.vx; p.y += p.vy; p.rot += p.rotSpeed*0.02; p.life--;
+    cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180);
+    cctx.fillStyle = p.color;
+    if(p.shape==='rect') cctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+    else {
+      cctx.beginPath(); cctx.moveTo(0,-p.size/2); cctx.lineTo(p.size/2,p.size/2); cctx.lineTo(-p.size/2,p.size/2); cctx.closePath(); cctx.fill();
+    }
+    cctx.restore();
+    if(p.life<0 || p.y > innerHeight+80) pieces.splice(i,1);
+  }
+  // gentle ongoing sprinkle
+  if(Math.random() < 0.02) spawnConfetti(Math.random()*innerWidth, -10, 6, 20);
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+/* Burst on button / tap */
+document.getElementById('burstBtn').addEventListener('click', ()=> spawnConfetti(innerWidth/2, innerHeight/3, 220, 8));
+let lastTap = 0;
+document.addEventListener('pointerdown', (e)=>{
+  // if clicking / tapping directly on controls or file input, don't trigger heavy burst
+  const tag = e.target.tagName.toLowerCase();
+  if(['button','input','svg','path','text'].includes(tag)) return;
+  const t = Date.now();
+  const isDouble = (t - lastTap) < 350;
+  lastTap = t;
+  spawnConfetti(e.clientX, e.clientY, isDouble ? 260 : 90, isDouble ? 6 : 12);
+});
+
+/* ---------------------------
+   Audio: upload or URL + controls
+   --------------------------- */
+let audio = new Audio();
+audio.loop = true;
+audio.crossOrigin = "anonymous";
+let playing = false;
+const playBtn = document.getElementById('playBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const muteBtn = document.getElementById('muteBtn');
+const volRange = document.getElementById('volRange');
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
+const urlInput = document.getElementById('urlInput');
+const setUrlBtn = document.getElementById('setUrlBtn');
+
+function setAudioSrcFromFile(file){
+  const url = URL.createObjectURL(file);
+  audio.src = url; audio.load();
+  playAudio();
+}
+
+uploadBtn.addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', (e)=> { if(e.target.files[0]) setAudioSrcFromFile(e.target.files[0]); });
+
+setUrlBtn.addEventListener('click', ()=>{
+  const v = urlInput.value.trim();
+  if(!v) return alert('Please paste a direct MP3 URL');
+  audio.src = v; audio.load(); playAudio();
+});
+
+function playAudio(){
+  audio.volume = parseFloat(volRange.value);
+  audio.play().then(()=>{
+    playing = true; playBtn.setAttribute('aria-pressed','true');
+    playBtn.textContent = 'Playing ▶';
+  }).catch(err=>{
+    alert('Browser requires a user gesture to play audio. Click Play again or upload a file.');
+    console.error(err);
+  });
+}
+function pauseAudio(){
+  audio.pause(); playing = false; playBtn.setAttribute('aria-pressed','false'); playBtn.textContent = 'Play ▶';
+}
+playBtn.addEventListener('click', ()=> { if(!playing) playAudio(); else pauseAudio(); });
+pauseBtn.addEventListener('click', ()=> pauseAudio());
+muteBtn.addEventListener('click', ()=> {
+  audio.muted = !audio.muted; muteBtn.setAttribute('aria-pressed', audio.muted ? 'true' : 'false');
+  muteBtn.textContent = audio.muted ? 'Unmute 🔈' : 'Mute 🔈';
+});
+volRange.addEventListener('input', ()=> { audio.volume = parseFloat(volRange.value); });
+
+/* keyboard accessibility */
+window.addEventListener('keydown', e=>{
+  if(e.key===' ' && document.activeElement===document.body){ e.preventDefault(); spawnConfetti(innerWidth/2, innerHeight/3, 140); }
+  if(e.key==='m') { audio.muted = !audio.muted; muteBtn.textContent = audio.muted ? 'Unmute 🔈' : 'Mute 🔈'; }
+});
+
+/* ---------------------------
+   Share + Download snapshot
+   --------------------------- */
+const shareBtn = document.getElementById('shareBtn');
+shareBtn.addEventListener('click', async ()=>{
+  if(navigator.share){
+    try{
+      await navigator.share({title:'Happy Raksha Bandhan',text:'Happy Raksha Bandhan! From Raushan ❤️',url:window.location.href});
+    }catch(e){ console.log('share cancelled') }
+  } else {
+    prompt('Share this link with your sisters:', window.location.href);
+  }
+});
+
+/* Download card PNG using drawing on canvas (simple) */
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener('click', async ()=>{
+  // draw the card area into a canvas snapshot (approximate)
+  const card = document.querySelector('.card');
+  const rect = card.getBoundingClientRect();
+  const s = Math.min(1400, Math.max(rect.width, 800));
+  const snap = document.getElementById('snapshotCanvas');
+  snap.width = rect.width * devicePixelRatio;
+  snap.height = rect.height * devicePixelRatio;
+  const ctx = snap.getContext('2d');
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  // simple background
+  ctx.fillStyle = '#0c0710';
+  ctx.fillRect(0,0,rect.width,rect.height);
+  // text copy
+  ctx.font = '28px Inter, sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText('Happy Raksha Bandhan', 28, 60);
+  ctx.font = '16px Inter, sans-serif';
+  ctx.fillStyle = '#e6d9cf';
+  ctx.fillText('Wishing you love, protection and endless smiles.', 28, 98);
+  ctx.fillStyle = '#f5c242';
+  ctx.fillText('— From Raushan ❤️', 28, rect.height - 40);
+  // create image
+  snap.toBlob(blob=>{
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'raksha-bandhan-card.png';
+    a.click();
+  });
+});
+
+/* ---------------------------
+   Nice entrance: tiny confetti + petals
+   --------------------------- */
+setTimeout(()=> { spawnConfetti(innerWidth/2, innerHeight/3, 90, 6); }, 600);
+setTimeout(()=> { for(let i=0;i<8;i++) petals.push(makePetal()); }, 300);
+
+/* ---------------------------
+   Animation loop safety
+   --------------------------- */
+let animRunning = true;
+function tick(){
+  if(!animRunning) return;
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* ---------------------------
+   Start confetti & petals draw loops already scheduled above
+   --------------------------- */
+
+/* Ensure the title words animate nicely even if already visible */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const words = document.querySelectorAll('.title .word');
+  words.forEach((w,i)=> w.style.animationDelay = (i*140)+'ms');
+});
+
+/* That's it — everything included in a single file, ready for GitHub Pages.
+   Notes for you:
+   - To use your MP3: click Upload Music (for local file) or paste a direct MP3 URL and click Set.
+   - If you want autoplay on page load (not recommended) uncomment playAudio() where appropriate.
+*/
+</script>
+</body>
+</html>
